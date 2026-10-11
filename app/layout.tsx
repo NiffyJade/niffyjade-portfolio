@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight, Sora } from "next/font/google";
-import { contact, site } from "@/content/site";
+import { site, socials } from "@/content/site";
 import { siteUrl } from "@/lib/config";
 import "./globals.css";
 
@@ -43,7 +43,7 @@ const personSchema = {
   alternateName: site.alias,
   jobTitle: site.role,
   url: siteUrl,
-  sameAs: contact.links.map((l) => l.href),
+  sameAs: socials.filter((x) => x.brand !== "whatsapp").map((x) => x.href),
   address: {
     "@type": "PostalAddress",
     addressLocality: site.location.city,

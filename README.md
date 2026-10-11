@@ -1,6 +1,6 @@
 # NiffyJade Portfolio
 
-**Design rationale.** A deep-ink canvas with a single warm gold-to-coral accent keeps the page calm and premium. The hero's self-drawing workflow diagram (lead, research, outreach, booked call) is the one signature motif: it shows what I build in five seconds. Motion is one orchestrated load sequence, then restrained scroll reveals and pointer effects, all disabled under reduced motion. Cards are used only where content is parallel; case studies sit in an accordion so outcomes stay scannable. One primary action, "Book a call", repeats in the header, hero and contact.
+**Design rationale.** A deep-ink canvas with a single warm gold-to-coral accent keeps the page calm and premium. The hero's self-drawing workflow diagram (lead, research, outreach, booked call) is the one signature motif: it shows what I build in five seconds. Motion is one orchestrated load sequence, then restrained scroll reveals and pointer effects, all disabled under reduced motion. Dark sections alternate with framed light panels, and a highlighter band marks the key phrase. Services open as a numbered list; case studies are outcome cards. One primary action, "Book a call", repeats in the header, hero and contact.
 
 ## Stack
 Next.js (App Router) · TypeScript · Tailwind CSS v4 · `next/font` (Sora, Inter Tight). No animation library.

@@ -3,11 +3,8 @@
  * Anything wrapped in [brackets] is a placeholder (see PLACEHOLDERS.md).
  */
 
-export type ServiceIcon = "search" | "funnel" | "doc" | "wave" | "bars" | "code";
-
 export interface Service {
   title: string;
-  icon: ServiceIcon;
   problem: string;
   build: string;
   outcome: string;
@@ -19,6 +16,8 @@ export interface CaseStudy {
   problem: string;
   built: string;
   tools: string;
+  /** Keys into content/brands.ts */
+  brands: string[];
   result: string;
 }
 
@@ -56,6 +55,17 @@ export const site = {
   ogDescription:
     "Automation systems that run the busywork so people can focus on the work only they can do.",
   year: new Date().getFullYear(),
+};
+
+/** Small pill labels and one-line intros that sit above section headings. */
+export const sections = {
+  services: { pill: "Services", intro: "Six kinds of systems I build and maintain. Start with the problem that costs you the most time." },
+  work: { pill: "Case studies" },
+  process: { pill: "Process", intro: "Five steps from first call to a system your team can run without me." },
+  tools: { pill: "Tools", intro: "The stack behind every system I build." },
+  about: { pill: "About" },
+  testimonials: { pill: "Kind words" },
+  contact: { pill: "Contact" },
 };
 
 export const nav = [
@@ -101,7 +111,6 @@ export const marquee: { name: string; brand: string }[] = [
 export const services: Service[] = [
   {
     title: "AI lead research and outreach",
-    icon: "search",
     problem: "Finding and qualifying prospects by hand is slow.",
     build:
       "Pipelines that pull leads, research each company with AI and draft personalized outreach.",
@@ -109,35 +118,30 @@ export const services: Service[] = [
   },
   {
     title: "CRM and pipeline automation",
-    icon: "funnel",
     problem: "Leads fall through gaps between tools.",
     build: "Triggers and follow-up sequences in HubSpot, Freshsales and similar CRMs.",
     outcome: "Faster follow-up and fewer no-shows.",
   },
   {
     title: "Call-transcript and SOP systems",
-    icon: "doc",
     problem: "Knowledge stays locked inside recorded calls.",
     build: "Workflows that turn transcripts into summaries, SOPs and searchable knowledge.",
     outcome: "Calls become documentation automatically.",
   },
   {
     title: "AI voice callers and SMS",
-    icon: "wave",
     problem: "Reminders and first-contact calls eat staff time.",
     build: "Voice agents and SMS sequences connected to your calendar and CRM.",
     outcome: "Consistent outreach without extra headcount.",
   },
   {
     title: "Reporting and dashboards",
-    icon: "bars",
     problem: "Weekly numbers take hours to compile.",
     build: "Automated reports pulled from your tools into Sheets or Slack.",
     outcome: "Accurate numbers, delivered on schedule.",
   },
   {
     title: "Full-stack web apps",
-    icon: "code",
     problem: "Off-the-shelf tools don't fit your process.",
     build: "Custom React and Node apps that plug into your automations.",
     outcome: "Software shaped around how you work.",
@@ -155,6 +159,7 @@ export const work = {
       built:
         "Apollo and Apify collect leads, an LLM researches each company, and drafts land in Sheets for review.",
       tools: "n8n, Apollo, Apify, Google Sheets, LLM",
+      brands: ["n8n", "apollo", "apify", "googlesheets", "openai"],
       result: "[X] leads researched per week; [X] hours saved",
     },
     {
@@ -164,6 +169,7 @@ export const work = {
       built:
         "Transcripts are captured, summarized and converted into SOPs and reports in a central knowledge base.",
       tools: "n8n, LLM, Google Drive, Sheets",
+      brands: ["n8n", "openai", "googledrive", "googlesheets"],
       result: "[X] SOPs generated; [X] hours saved per week",
     },
     {
@@ -172,6 +178,7 @@ export const work = {
       problem: "Volunteers spent evenings calling and texting reminders.",
       built: "Scheduled SMS plus an AI voice caller that confirms attendance and logs results.",
       tools: "n8n, Twilio, voice AI, Google Sheets",
+      brands: ["n8n", "twilio", "googlesheets"],
       result: "[X]% attendance confirmed automatically",
     },
     {
@@ -180,6 +187,7 @@ export const work = {
       problem: "Marketing content waited on manual briefs.",
       built: "A CRM event triggers AI content drafts matched to the lead and product.",
       tools: "n8n, Freshsales, LLM",
+      brands: ["n8n", "freshsales", "openai"],
       result: "[X] pieces per month; turnaround cut from [X] to [X]",
     },
   ] satisfies CaseStudy[],
@@ -218,11 +226,15 @@ export const tools: ToolGroup[] = [
 
 export const about = {
   heading: "About me",
-  photoNote: "Add a professional portrait",
   photoSrc: "/photo.jpg",
   photoAlt: "Portrait of Oluwanifemi Adefisayo",
-  /** Set to true once public/photo.jpg exists. */
-  hasPhoto: true,
+  role: "Automation Engineer, Ile-Ife, Nigeria",
+  points: [
+    "Based in Ile-Ife, Nigeria, working remotely with teams abroad",
+    "Overlaps your working hours",
+    "Written progress updates, and problems flagged early",
+    "Documented, observable systems that are easy to hand over",
+  ],
   paragraphs: [
     "I'm Oluwanifemi Adefisayo, known as NiffyJade, a full-stack developer and automation engineer based in Ile-Ife, Nigeria. I work remotely with teams abroad, mostly coaching and advisory businesses, agencies and service companies.",
     "My day-to-day is building and maintaining multi-system automation: call-transcript pipelines, SOP systems, AI lead research and voice callers. I care about systems that are documented, observable and easy to hand over.",
@@ -249,11 +261,6 @@ export const contact = {
   nextHeading: "What happens next",
   nextSteps: ["A short call", "A written proposal with scope and price", "Your build start date"],
   reachHeading: "Or reach me directly",
-  whatsapp: { display: "+234 810 836 9009", href: "https://wa.me/2348108369009" },
-  links: [
-    { label: "LinkedIn", brand: "linkedin", href: "https://www.linkedin.com/in/oluwanifemi-adefisayo/" },
-    { label: "GitHub", brand: "github", href: "https://github.com/NiffyJade" },
-  ],
   form: {
     name: "Name",
     email: "Email",
@@ -267,3 +274,10 @@ export const contact = {
     },
   },
 };
+
+/** Logo-only contact links, shared by the About, Contact and Footer sections. */
+export const socials = [
+  { label: "WhatsApp", brand: "whatsapp", href: "https://wa.me/2348108369009" },
+  { label: "LinkedIn", brand: "linkedin", href: "https://www.linkedin.com/in/oluwanifemi-adefisayo/" },
+  { label: "GitHub", brand: "github", href: "https://github.com/NiffyJade" },
+];

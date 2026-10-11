@@ -1,4 +1,5 @@
 import { Atmosphere } from "@/components/Atmosphere";
+import { FloatingCta } from "@/components/FloatingCta";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -12,6 +13,10 @@ import { Testimonials } from "@/components/sections/Testimonials";
 import { Tools } from "@/components/sections/Tools";
 import { Work } from "@/components/sections/Work";
 
+/*
+ * Section rhythm: dark page sections alternate with framed light panels
+ * (Work, Tools, Testimonials). The theme toggle flips the whole pattern.
+ */
 export default function Home() {
   return (
     <>
@@ -30,6 +35,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <FloatingCta />
     </>
   );
 }
