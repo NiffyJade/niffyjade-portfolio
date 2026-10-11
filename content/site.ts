@@ -26,11 +26,18 @@ export interface Step {
   body: string;
 }
 
+export interface ToolChip {
+  /** Key into content/brands.ts */
+  brand: string;
+  label: string;
+}
+
 export interface ToolGroup {
   title: string;
   items: string;
-  /** Keys into content/brands.ts */
-  brands: string[];
+  chips: ToolChip[];
+  /** The base layer that connects every other layer */
+  hub?: boolean;
 }
 
 export interface Quote {
@@ -62,7 +69,7 @@ export const sections = {
   services: { pill: "Services", intro: "Six kinds of systems I build and maintain. Start with the problem that costs you the most time." },
   work: { pill: "Case studies" },
   process: { pill: "Process", intro: "Five steps from first call to a system your team can run without me." },
-  tools: { pill: "Tools", intro: "The stack behind every system I build." },
+  tools: { pill: "Tools", intro: "The stack behind every system I build, with n8n as the layer that connects it all." },
   about: { pill: "About" },
   testimonials: { pill: "Kind words" },
   contact: { pill: "Contact" },
@@ -216,12 +223,46 @@ export const processSteps: Step[] = [
   },
 ];
 
+/** Listed top to bottom as a stack: what people see, down to the automation layer that wires it all together. */
 export const tools: ToolGroup[] = [
-  { title: "Automation", items: "n8n, webhooks, API integrations", brands: ["n8n"] },
-  { title: "AI and LLM", items: "OpenAI and other LLMs, voice agents, prompt design", brands: ["openai"] },
-  { title: "CRM and marketing", items: "HubSpot, Freshsales, Apollo, Apify", brands: ["hubspot", "freshsales", "apollo", "apify"] },
-  { title: "Frontend and backend", items: "React, Node, REST APIs", brands: ["react", "nodejs"] },
-  { title: "Data", items: "Google Sheets, Airtable, Google Workspace", brands: ["googlesheets", "airtable", "googleworkspace"] },
+  {
+    title: "Frontend and backend",
+    items: "React, Node, REST APIs",
+    chips: [
+      { brand: "react", label: "React" },
+      { brand: "nodejs", label: "Node" },
+    ],
+  },
+  {
+    title: "AI and LLM",
+    items: "OpenAI and other LLMs, voice agents, prompt design",
+    chips: [{ brand: "openai", label: "OpenAI" }],
+  },
+  {
+    title: "CRM and marketing",
+    items: "HubSpot, Freshsales, Apollo, Apify",
+    chips: [
+      { brand: "hubspot", label: "HubSpot" },
+      { brand: "freshsales", label: "Freshsales" },
+      { brand: "apollo", label: "Apollo" },
+      { brand: "apify", label: "Apify" },
+    ],
+  },
+  {
+    title: "Data",
+    items: "Google Sheets, Airtable, Google Workspace",
+    chips: [
+      { brand: "googlesheets", label: "Google Sheets" },
+      { brand: "airtable", label: "Airtable" },
+      { brand: "googleworkspace", label: "Google Workspace" },
+    ],
+  },
+  {
+    title: "Automation",
+    items: "n8n, webhooks, API integrations",
+    chips: [{ brand: "n8n", label: "n8n" }],
+    hub: true,
+  },
 ];
 
 export const about = {
