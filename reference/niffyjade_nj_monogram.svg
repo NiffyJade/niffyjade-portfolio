@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">NJ Monogram</title>
+  <desc id="desc">Minimalist black NJ monogram on a transparent background.</desc>
+  <g fill="#111111">
+    <!-- N: clean geometric diagonal with a strong vertical stem -->
+    <path d="M270 300 H354 L614 552 V694 L354 444 V724 H270 Z"/>
+    <!-- J: tall stem with a refined curved hook -->
+    <path d="M654 300 H754 V650
+             C754 747 700 802 616 802
+             C560 802 518 771 496 718
+             L557 659
+             C569 691 589 710 617 710
+             C643 710 654 688 654 650 Z"/>
+  </g>
+</svg>

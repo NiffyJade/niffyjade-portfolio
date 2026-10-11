@@ -1,0 +1,248 @@
+{
+  "name": "NiffyJade portfolio: contact form to emails",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contact-form",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Contact form webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "b2000000-0000-4000-8000-000000000001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== EDIT THIS LINE =====\nconst OWNER_EMAIL = \"YOUR_EMAIL@example.com\";   // where enquiries are delivered (usually the Gmail account you connect)\n// ================================\nconst SITE_NAME = \"NiffyJade\";\n\nconst b = $input.first().json.body || {};\n// Single-line fields: strip line breaks (blocks email header injection) and cap length\nconst oneLine = (v, max) => String(v ?? \"\").replace(/[\\r\\n]+/g, \" \").trim().slice(0, max);\nconst name = oneLine(b.name, 100);\nconst email = oneLine(b.email, 200).toLowerCase();\nconst details = String(b.details ?? \"\").replace(/\\r\\n/g, \"\\n\").trim().slice(0, 5000);\n\nconst valid = !!name && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) && !!details;\n\n// Escape before putting visitor text into HTML\nconst esc = (s) => s.replace(/&/g, \"&amp;\").replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\").replace(/\"/g, \"&quot;\");\nconst detailsHtml = esc(details).replace(/\\n/g, \"<br>\");\nconst firstName = esc(name.split(\" \")[0]);\nconst when = new Date().toUTCString();\n\nconst wrap = (inner) => `<div style=\"font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1b2033;max-width:560px\">${inner}</div>`;\n\nconst ownerHtml = wrap(`\n  <h2 style=\"margin:0 0 12px\">New project enquiry</h2>\n  <table style=\"border-collapse:collapse;width:100%\">\n    <tr><td style=\"padding:6px 12px 6px 0;color:#666;vertical-align:top\">Name</td><td style=\"padding:6px 0\"><b>${esc(name)}</b></td></tr>\n    <tr><td style=\"padding:6px 12px 6px 0;color:#666;vertical-align:top\">Email</td><td style=\"padding:6px 0\"><a href=\"mailto:${esc(email)}\">${esc(email)}</a></td></tr>\n    <tr><td style=\"padding:6px 12px 6px 0;color:#666;vertical-align:top\">Received</td><td style=\"padding:6px 0\">${when}</td></tr>\n  </table>\n  <p style=\"margin:16px 0 6px;color:#666\">What they want to automate</p>\n  <div style=\"padding:14px 16px;background:#f4f5f8;border-radius:8px\">${detailsHtml}</div>\n  <p style=\"margin-top:16px;color:#666;font-size:13px\">Hit reply to answer them directly.</p>`);\n\nconst ackHtml = wrap(`\n  <p>Hi ${firstName},</p>\n  <p>Thanks for reaching out. I've received your message and I'll reply within one business day with questions or a rough plan.</p>\n  <p style=\"margin:18px 0 6px;color:#666\">Here's what you sent me:</p>\n  <div style=\"padding:14px 16px;background:#f4f5f8;border-radius:8px\">${detailsHtml}</div>\n  <p style=\"margin-top:18px\"><b>What happens next:</b> a short call, a written proposal with scope and price, then a build start date.</p>\n  <p>Speak soon,<br>Oluwanifemi (${SITE_NAME})</p>`);\n\nreturn [{\n  json: {\n    valid, name, email, details,\n    ownerEmail: OWNER_EMAIL,\n    ownerSenderName: `${SITE_NAME} website`,\n    ackSenderName: `Oluwanifemi | ${SITE_NAME}`,\n    ownerSubject: `New enquiry from ${name}`,\n    ackSubject: \"Got your message, I'll reply within one business day\",\n    ownerHtml, ackHtml,\n  },\n}];"
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Validate and build emails",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3000000-0000-4000-8000-000000000001",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Is the form valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Validate and build emails').item.json.ownerEmail }}",
+        "subject": "={{ $('Validate and build emails').item.json.ownerSubject }}",
+        "emailType": "html",
+        "message": "={{ $('Validate and build emails').item.json.ownerHtml }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Validate and build emails').item.json.ownerSenderName }}",
+          "replyTo": "={{ $('Validate and build emails').item.json.email }}"
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Email me the details",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        200
+      ],
+      "webhookId": "b2000000-0000-4000-8000-000000000004",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Validate and build emails').item.json.email }}",
+        "subject": "={{ $('Validate and build emails').item.json.ackSubject }}",
+        "emailType": "html",
+        "message": "={{ $('Validate and build emails').item.json.ackHtml }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Validate and build emails').item.json.ackSenderName }}",
+          "replyTo": "={{ $('Validate and build emails').item.json.ownerEmail }}"
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Email visitor acknowledgement",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        200
+      ],
+      "webhookId": "b2000000-0000-4000-8000-000000000005",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": false, \"error\": \"invalid\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Contact form\n1. Open **Validate and build emails** and set OWNER_EMAIL.\n2. Connect your Gmail (OAuth2) credential on both Gmail nodes.\n3. Activate the workflow. Production URL ends in /webhook/contact-form.\n\nIf a Gmail node fails, the visitor gets an error and sees the site's failure message.",
+        "height": 200,
+        "width": 360
+      },
+      "id": "a1000000-0000-4000-8000-000000000008",
+      "name": "Setup notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        40
+      ]
+    }
+  ],
+  "connections": {
+    "Contact form webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate and build emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and build emails": {
+      "main": [
+        [
+          {
+            "node": "Is the form valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is the form valid?": {
+      "main": [
+        [
+          {
+            "node": "Email me the details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email me the details": {
+      "main": [
+        [
+          {
+            "node": "Email visitor acknowledgement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email visitor acknowledgement": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
