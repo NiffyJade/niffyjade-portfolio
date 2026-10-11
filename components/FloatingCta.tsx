@@ -5,7 +5,7 @@ import { bookingUrl, isExternal } from "@/lib/config";
 
 /**
  * Spinning "Book a call" badge, desktop only. Appears once the visitor has
- * scrolled past the hero (toggles data-show; CSS does the fade).
+ * scrolled past the hero, and hides over the contact section (toggles data-show; CSS fades it).
  */
 export function FloatingCta() {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -13,10 +13,21 @@ export function FloatingCta() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const update = () => el.setAttribute("data-show", String(window.scrollY > 700));
+    let atContact = false;
+    const update = () => el.setAttribute("data-show", String(window.scrollY > 700 && !atContact));
     update();
     window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    // The contact form is the destination, so the badge steps aside while it is on screen
+    const contact = document.getElementById("contact");
+    const io = new IntersectionObserver(([entry]) => {
+      atContact = entry.isIntersecting;
+      update();
+    });
+    if (contact) io.observe(contact);
+    return () => {
+      window.removeEventListener("scroll", update);
+      io.disconnect();
+    };
   }, []);
 
   return (
